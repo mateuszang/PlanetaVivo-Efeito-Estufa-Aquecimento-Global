@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlanetaVivo — Efeito Estufa & Aquecimento Global</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Outfit', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            abyss: '#060D17',
+            deepsea: '#0B1726',
+            panel: '#102033',
+            mint: '#10B981',
+            cyan: '#06B6D4',
+            amber: '#F59E0B',
+            coral: '#F43F5E',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #060D17;
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .glass-card {
+      background: rgba(16, 32, 51, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .glow-emerald {
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.18);
+    }
+
+    .glow-amber {
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.22);
+    }
+
+    .glow-coral {
+      box-shadow: 0 0 40px rgba(244, 63, 94, 0.25);
+    }
+
+    /* 3D Flip Card */
+    .flip-card {
+      perspective: 1200px;
+      min-height: 310px;
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 310px;
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card.flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front, .flip-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 1.5rem;
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Custom Range Slider com boa área de toque */
+    input[type="range"].greenhouse-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #10B981 0%, #F59E0B 50%, #F43F5E 100%);
+      outline: none;
+      touch-action: none;
+    }
+
+    input[type="range"].greenhouse-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 4px solid #060D17;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 6px 16px rgba(0, 0, 0, 0.55);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"].greenhouse-slider::-webkit-slider-thumb:hover,
+    input[type="range"].greenhouse-slider::-webkit-slider-thumb:active {
+      transform: scale(1.12);
+    }
+
+    input[type="range"].greenhouse-slider::-moz-range-thumb {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 4px solid #060D17;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 6px 16px rgba(0, 0, 0, 0.55);
+      cursor: pointer;
+    }
+
+    /* Scroll Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .float-slow {
+      animation: floatSlow 5s ease-in-out infinite;
+    }
+
+    .bg-grid-pattern {
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.12), transparent 38%),
+        radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.11), transparent 35%),
+        radial-gradient(circle at 50% 80%, rgba(245, 158, 11, 0.08), transparent 40%);
+    }
+  </style>
+</head>
+<body class="bg-grid-pattern antialiased selection:bg-emerald-400 selection:text-slate-950">
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-abyss/85 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#topo" class="flex items-center gap-2.5 group min-h-[44px]">
+        <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-slate-950 font-extrabold text-lg shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition">
+          🌍
+        </span>
+        <span class="font-display font-extrabold text-xl tracking-tight">
+          Planeta<span class="text-emerald-400">Vivo</span>
+        </span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="#simulador" class="hover:text-emerald-400 transition py-2">Simulador</a>
+        <a href="#diferenca" class="hover:text-emerald-400 transition py-2">Efeito vs. Aquecimento</a>
+        <a href="#causas" class="hover:text-emerald-400 transition py-2">Causas</a>
+        <a href="#calculadora" class="hover:text-emerald-400 transition py-2">Sua Pegada</a>
+        <a href="#acao" class="hover:text-emerald-400 transition py-2">Ação Diária</a>
+        <a href="#quiz" class="hover:text-emerald-400 transition py-2">Quiz</a>
+      </nav>
+
+      <a href="#calculadora" class="px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center rounded-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-sm transition shadow-lg shadow-emerald-500/25">
+        Calcular Impacto
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="topo" class="relative pt-14 pb-20 lg:pt-20 lg:pb-28 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7 space-y-6">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-300 text-xs sm:text-sm font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          Laboratório Interativo de Conscientização Climática
+        </div>
+
+        <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight">
+          O clima está mudando.
+          <span class="block bg-gradient-to-r from-emerald-300 via-cyan-300 to-amber-300 bg-clip-text text-transparent">
+            Entenda, sinta e transforme.
+          </span>
+        </h1>
+
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+          O <strong class="text-white">efeito estufa</strong> mantém a Terra habitável, mas o excesso de gases liberados pelas atividades humanas intensificou esse processo e provocou o <strong class="text-white">aquecimento global</strong>. Explore simulações visuais, teste seus hábitos e descubra como cada escolha pesa no futuro do planeta.
+        </p>
+
+        <div class="flex flex-wrap gap-3.5 pt-2">
+          <a href="#simulador" class="px-6 py-3.5 min-h-[48px] inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 font-extrabold text-sm sm:text-base hover:brightness-105 transition shadow-xl shadow-cyan-500/20">
+            Testar Simulador do Efeito Estufa
+          </a>
+          <a href="#quiz" class="px-6 py-3.5 min-h-[48px] inline-flex items-center justify-center rounded-xl glass-card hover:bg-white/10 text-white font-semibold text-sm sm:text-base transition">
+            Fazer Quiz Climático
+          </a>
+        </div>
+
+        <p class="text-xs text-slate-400 pt-1">
+          Referências de contexto: OMM / Copernicus, NOAA e relatórios do IPCC.
+        </p>
+      </div>
+
+      <!-- Indicadores Vivos -->
+      <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+        <div class="glass-card rounded-2xl p-5 glow-amber float-slow">
+          <div class="flex items-center justify-between">
+            <span class="text-xs uppercase tracking-wider font-bold text-amber-300">Anomalia Térmica Global</span>
+            <span class="text-2xl">🌡️</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="counter font-display text-4xl font-black text-white" data-target="1.48" data-decimals="2" data-prefix="+" data-suffix="°C">+1.48°C</span>
+            <span class="text-xs text-slate-400">vs. era pré-industrial</span>
+          </div>
+          <p class="mt-2 text-xs text-slate-300">
+            Pequenas frações de grau alteram chuvas, ondas de calor, oceanos e safras agrícolas.
+          </p>
+          <p class="mt-1.5 text-[11px] text-slate-400">Fonte: OMM / Copernicus</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-cyan-300">CO₂ Atmosférico</span>
+              <span class="text-xl">💨</span>
+            </div>
+            <div class="mt-2">
+              <span class="counter font-display text-3xl font-extrabold text-white" data-target="426" data-decimals="0" data-suffix=" ppm">426 ppm</span>
+            </div>
+            <p class="mt-1.5 text-xs text-slate-400">Mais de 50% acima do nível pré-industrial (~280 ppm).</p>
+            <p class="mt-1 text-[11px] text-slate-500">Fonte: NOAA</p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-300">Gelo Marinho</span>
+              <span class="text-xl">🧊</span>
+            </div>
+            <div class="mt-2">
+              <span class="counter font-display text-3xl font-extrabold text-white" data-target="12.6" data-decimals="1" data-prefix="-" data-suffix="%">-12.6%</span>
+            </div>
+            <p class="mt-1.5 text-xs text-slate-400">Queda por década no Ártico desde o início das medições por satélite.</p>
+            <p class="mt-1 text-[11px] text-slate-500">Fonte: NASA / NSIDC</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 1: Simulador Interativo do Efeito Estufa -->
+  <section id="simulador" class="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-deepsea/60">
+    <div class="max-w-7xl mx-auto reveal">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Simulação Visual em Tempo Real</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold mt-2">
+          Como funciona o Efeito Estufa na prática?
+        </h2>
+        <p class="text-slate-300 mt-3 text-base">
+          Arraste o controle de <strong class="text-white">Concentração de Gases do Efeito Estufa</strong> para observar como a radiação solar entra, parte do calor é retida pela atmosfera e o que acontece com a temperatura média e o clima da Terra.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+        <!-- Canvas da Atmosfera -->
+        <div class="lg:col-span-7 glass-card rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold">
+              <span class="inline-block w-3 h-3 rounded-full bg-amber-400"></span> Sol / Calor
+              <span class="inline-block w-3 h-3 rounded-full bg-rose-500 ml-2"></span> Calor Retido
+              <span class="inline-block w-3 h-3 rounded-full bg-emerald-400 ml-2"></span> Camada de Gases
+            </div>
+            <span id="simStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              Equilíbrio Alterado
+            </span>
+          </div>
+
+          <div class="relative w-full rounded-2xl overflow-hidden border border-white/10 bg-slate-950">
+            <canvas id="greenhouseCanvas" width="800" height="430" class="w-full h-auto block"></canvas>
+          </div>
+
+          <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+            <div class="rounded-xl bg-white/5 p-3">
+              <div class="text-[11px] uppercase tracking-wider text-slate-400">CO₂ Simulado</div>
+              <div id="simPpm" class="font-display text-xl sm:text-2xl font-extrabold text-cyan-300 mt-0.5">426 ppm</div>
+            </div>
+            <div class="rounded-xl bg-white/5 p-3">
+              <div class="text-[11px] uppercase tracking-wider text-slate-400">Temp. Média</div>
+              <div id="simTemp" class="font-display text-xl sm:text-2xl font-extrabold text-amber-300 mt-0.5">15.4°C</div>
+            </div>
+            <div class="rounded-xl bg-white/5 p-3">
+              <div class="text-[11px] uppercase tracking-wider text-slate-400">Calor Retido</div>
+              <div id="simTrapped" class="font-display text-xl sm:text-2xl font-extrabold text-rose-400 mt-0.5">68%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles e Diagnóstico -->
+        <div class="lg:col-span-5 glass-card rounded-3xl p-6 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <label for="gasSlider" class="font-display font-bold text-lg text-white">
+                Gases do Efeito Estufa
+              </label>
+              <span id="gasPercentLabel" class="font-display font-extrabold text-xl text-amber-300">55%</span>
+            </div>
+
+            <input id="gasSlider" type="range" min="0" max="100" value="55" aria-label="Concentração de gases do efeito estufa" class="greenhouse-slider cursor-pointer" />
+
+            <div class="flex justify-between text-xs text-slate-400 font-medium">
+              <span>Natural (280 ppm)</span>
+              <span>Atual (~426 ppm)</span>
+              <span>Crítico (800+ ppm)</span>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-1">
+              <button type="button" data-preset="15" class="preset-btn px-3.5 py-2 min-h-[44px] rounded-lg text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-400/30 transition">
+                Era Pré-Industrial
+              </button>
+              <button type="button" data-preset="55" class="preset-btn px-3.5 py-2 min-h-[44px] rounded-lg text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/30 transition">
+                Cenário Atual
+              </button>
+              <button type="button" data-preset="92" class="preset-btn px-3.5 py-2 min-h-[44px] rounded-lg text-xs font-bold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-400/30 transition">
+                Alta Emissão
+              </button>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-slate-950/70 border border-white/10 p-5 space-y-3">
+            <h3 id="simTitle" class="font-display font-bold text-lg text-amber-300">
+              Aquecimento em curso
+            </h3>
+            <p id="simDesc" class="text-sm text-slate-300 leading-relaxed">
+              Com mais CO₂, metano (CH₄) e óxido nitroso (N₂O), parte extra do calor irradiado pela superfície fica presa. O resultado são eventos extremos mais frequentes e derretimento acelerado de geleiras.
+            </p>
+            <div class="pt-2 border-t border-white/10">
+              <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Impactos observados neste nível:</div>
+              <ul id="simImpacts" class="space-y-1.5 text-sm text-slate-200">
+                <li>• Ondas de calor mais intensas e prolongadas</li>
+                <li>• Alteração no regime de chuvas e secas</li>
+                <li>• Expansão térmica dos oceanos e elevação do nível do mar</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 2: Flip Cards (Efeito Estufa vs. Aquecimento Global) -->
+  <section id="diferenca" class="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+    <div class="max-w-7xl mx-auto reveal">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-cyan-400">Conceitos Essenciais</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold mt-2">
+          Efeito Estufa ≠ Aquecimento Global
+        </h2>
+        <p class="text-slate-300 mt-3">
+          Muita gente usa os dois termos como sinônimos. Clique em cada cartão para virar e entender a diferença com clareza.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <!-- Card 1 -->
+        <div class="flip-card cursor-pointer group" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Virar cartão sobre Efeito Estufa Natural" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
+          <div class="flip-inner">
+            <div class="flip-front glass-card p-7 flex flex-col justify-between glow-emerald">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300">
+                    FENÔMENO NATURAL
+                  </span>
+                  <span class="text-3xl">🌱</span>
+                </div>
+                <h3 class="font-display text-2xl sm:text-3xl font-extrabold mt-5">Efeito Estufa</h3>
+                <p class="text-slate-300 mt-3 leading-relaxed">
+                  É um mecanismo natural e indispensável à vida. Gases como vapor d'água e CO₂ retêm parte do calor da Terra, mantendo a temperatura média global em torno de <strong class="text-emerald-300">+15°C</strong> em vez de cerca de <strong class="text-cyan-300">-18°C</strong>.
+                </p>
+              </div>
+              <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold text-emerald-300">
+                <span>CLIQUE PARA VER A ANALOGIA</span>
+                <span>↻ Virar cartão</span>
+              </div>
+            </div>
+
+            <div class="flip-back bg-gradient-to-br from-emerald-950 to-slate-900 border border-emerald-400/40 p-7 flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Analogia Simples</span>
+                <h4 class="font-display text-2xl font-extrabold mt-2 text-white">O cobertor na medida certa</h4>
+                <p class="text-slate-200 mt-3 leading-relaxed text-sm sm:text-base">
+                  Imagine dormir com um cobertor leve numa noite fresca: ele segura o calor do seu corpo e deixa você confortável. Sem o efeito estufa natural, a Terra seria um mundo congelado e inóspito para a maioria das formas de vida.
+                </p>
+              </div>
+              <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold text-emerald-300">
+                <span>SEM ELE, NÃO HAVERIA VIDA COMO CONHECEMOS</span>
+                <span>↻ Voltar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="flip-card cursor-pointer group" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Virar cartão sobre Aquecimento Global" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}">
+          <div class="flip-inner">
+            <div class="flip-front glass-card p-7 flex flex-col justify-between glow-coral">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300">
+                    DESEQUILÍBRIO ATUAL
+                  </span>
+                  <span class="text-3xl">🔥</span>
+                </div>
+                <h3 class="font-display text-2xl sm:text-3xl font-extrabold mt-5">Aquecimento Global</h3>
+                <p class="text-slate-300 mt-3 leading-relaxed">
+                  É o <strong class="text-rose-300">aumento acelerado da temperatura média</strong> do planeta nas últimas décadas, impulsionado principalmente pela queima de combustíveis fósseis, desmatamento e atividades que lançam gases estufa além da capacidade natural de absorção.
+                </p>
+              </div>
+              <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold text-rose-300">
+                <span>CLIQUE PARA VER A ANALOGIA</span>
+                <span>↻ Virar cartão</span>
+              </div>
+            </div>
+
+            <div class="flip-back bg-gradient-to-br from-rose-950 to-slate-900 border border-rose-400/40 p-7 flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-rose-300">Analogia Simples</span>
+                <h4 class="font-display text-2xl font-extrabold mt-2 text-white">Vários cobertores pesados de uma vez</h4>
+                <p class="text-slate-200 mt-3 leading-relaxed text-sm sm:text-base">
+                  Quando adicionamos camadas extras de CO₂ e metano, é como colocar vários cobertores grossos sobre o mesmo cobertor. O calor passa a escapar com mais dificuldade, fazendo o sistema superaquecer e desregular todo o equilíbrio climático.
+                </p>
+              </div>
+              <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold text-rose-300">
+                <span>O PROBLEMA É O EXCESSO, NÃO O FENÔMENO BASE</span>
+                <span>↻ Voltar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 3: Principais Causas (Abas Interativas) -->
+  <section id="causas" class="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-deepsea/60">
+    <div class="max-w-7xl mx-auto reveal">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-400">De Onde Vêm as Emissões?</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold mt-2">
+          As principais forças por trás do aquecimento
+        </h2>
+        <p class="text-slate-300 mt-3">
+          Selecione um setor para entender como ele contribui para os gases de efeito estufa e quais soluções já existem.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-2.5 mb-8" role="tablist" aria-label="Setores emissores">
+        <button type="button" class="cause-tab active px-4 py-2.5 min-h-[44px] rounded-xl font-bold text-sm bg-emerald-400 text-slate-950 transition" data-cause="energia">
+          ⚡ Energia e Combustíveis
+        </button>
+        <button type="button" class="cause-tab px-4 py-2.5 min-h-[44px] rounded-xl font-bold text-sm glass-card text-slate-200 hover:bg-white/10 transition" data-cause="florestas">
+          🌳 Desmatamento e Uso da Terra
+        </button>
+        <button type="button" class="cause-tab px-4 py-2.5 min-h-[44px] rounded-xl font-bold text-sm glass-card text-slate-200 hover:bg-white/10 transition" data-cause="agro">
+          🌾 Agropecuária e Alimentação
+        </button>
+        <button type="button" class="cause-tab px-4 py-2.5 min-h-[44px] rounded-xl font-bold text-sm glass-card text-slate-200 hover:bg-white/10 transition" data-cause="industria">
+          🏭 Indústria e Consumo
+        </button>
+      </div>
+
+      <div id="causePanel" class="glass-card rounded-3xl p-6 sm:p-8 grid lg:grid-cols-12 gap-8 items-center">
+        <!-- Preenchido via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 4: Método 1 de Fixação — Calculadora de Pegada + Passaporte Climático -->
+  <section id="calculadora" class="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+    <div class="max-w-7xl mx-auto reveal">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Fixação 01 • Diagnóstico Pessoal</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold mt-2">
+          Calculadora rápida da sua pegada de carbono
+        </h2>
+        <p class="text-slate-300 mt-3">
+          Responda 4 perguntas simples sobre o seu dia a dia e gere seu <strong class="text-white">Passaporte Climático</strong> com pontos de maior impacto e um desafio concreto para a semana.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8">
+        <!-- Formulário -->
+        <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+          <div>
+            <label class="block font-display font-bold text-base mb-2.5">1. Como você se desloca com mais frequência?</label>
+            <div class="grid sm:grid-cols-3 gap-2.5" id="qTransport">
+              <button type="button" data-val="0.4" class="calc-opt selected px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-emerald-400 bg-emerald-500/20 text-white text-left transition">
+                🚲 A pé / Bike / Ônibus
+              </button>
+              <button type="button" data-val="1.6" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🚗 Carro / Moto moderado
+              </button>
+              <button type="button" data-val="3.4" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🚙 Uso diário intenso / Voos
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-display font-bold text-base mb-2.5">2. Qual é o padrão da sua alimentação?</label>
+            <div class="grid sm:grid-cols-3 gap-2.5" id="qDiet">
+              <button type="button" data-val="0.8" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🥗 Base vegetal / Pouca carne
+              </button>
+              <button type="button" data-val="1.7" class="calc-opt selected px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-emerald-400 bg-emerald-500/20 text-white text-left transition">
+                🍽️ Equilibrada (carnes eventuais)
+              </button>
+              <button type="button" data-val="2.9" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🥩 Carne bovina frequente
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-display font-bold text-base mb-2.5">3. Como é o consumo de energia e climatização em casa?</label>
+            <div class="grid sm:grid-cols-3 gap-2.5" id="qEnergy">
+              <button type="button" data-val="0.5" class="calc-opt selected px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-emerald-400 bg-emerald-500/20 text-white text-left transition">
+                💡 Baixo / Ventilação natural
+              </button>
+              <button type="button" data-val="1.1" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🔌 Médio (chuveiro/eletros)
+              </button>
+              <button type="button" data-val="2.0" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                ❄️ Ar-condicionado / Alto uso
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-display font-bold text-base mb-2.5">4. Consumo de compras novas, roupas e desperdício de alimentos:</label>
+            <div class="grid sm:grid-cols-3 gap-2.5" id="qConsume">
+              <button type="button" data-val="0.4" class="calc-opt selected px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-emerald-400 bg-emerald-500/20 text-white text-left transition">
+                ♻️ Consciente / Quase zero desperdício
+              </button>
+              <button type="button" data-val="1.0" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🛍️ Moderado
+              </button>
+              <button type="button" data-val="1.8" class="calc-opt px-3.5 py-3 min-h-[48px] rounded-xl text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                📦 Frequente / Sobra comida
+              </button>
+            </div>
+          </div>
+
+          <!-- Desafio concreto para esta semana -->
+          <div class="pt-2 border-t border-white/10">
+            <label class="block font-display font-bold text-base mb-2.5">5. Escolha 1 desafio real para praticar nesta semana:</label>
+            <div class="grid sm:grid-cols-2 gap-2.5" id="qChallenge">
+              <button type="button" data-challenge="Fazer 2 dias sem carne bovina nesta semana" class="challenge-opt selected px-3.5 py-3 min-h-[48px] rounded-xl text-xs sm:text-sm font-semibold border border-cyan-400 bg-cyan-500/15 text-white text-left transition">
+                🥦 2 dias sem carne bovina
+              </button>
+              <button type="button" data-challenge="Trocar carro por caminhada, bike ou ônibus em trajetos curtos" class="challenge-opt px-3.5 py-3 min-h-[48px] rounded-xl text-xs sm:text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🚶 Mobilidade ativa ou coletiva em trajetos curtos
+              </button>
+              <button type="button" data-challenge="Planejar compras e refeições para zerar o desperdício de comida" class="challenge-opt px-3.5 py-3 min-h-[48px] rounded-xl text-xs sm:text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                🍲 Zero desperdício de comida na semana
+              </button>
+              <button type="button" data-challenge="Reduzir o tempo de banho e desligar aparelhos em stand-by" class="challenge-opt px-3.5 py-3 min-h-[48px] rounded-xl text-xs sm:text-sm font-semibold border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 text-left transition">
+                ⚡ Economia de energia em casa
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Passaporte Climático Gerado -->
+        <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between bg-gradient-to-b from-panel to-slate-950">
+          <div class="space-y-5">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+              <div>
+                <span class="text-[11px] uppercase tracking-widest text-emerald-400 font-bold">Passaporte Climático</span>
+                <h3 id="passportLevel" class="font-display text-2xl font-extrabold text-white mt-0.5">Guardião em Evolução</h3>
+              </div>
+              <span class="text-3xl">🪪</span>
+            </div>
+
+            <div>
+              <div class="flex items-baseline justify-between">
+                <span class="text-sm text-slate-400">Estimativa anual pessoal:</span>
+                <span id="footprintValue" class="font-display text-3xl sm:text-4xl font-black text-emerald-300">3.4 t CO₂e/ano</span>
+              </div>
+              <div class="w-full h-3 rounded-full bg-white/10 mt-3 overflow-hidden">
+                <div id="footprintBar" class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 transition-all duration-500" style="width: 38%"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1.5">
+                <span>Baixo impacto</span>
+                <span>Meta global ~2.0 t</span>
+                <span>Alto impacto</span>
+              </div>
+            </div>
+
+            <div class="rounded-2xl bg-white/5 p-4 space-y-2">
+              <div class="text-xs font-bold uppercase tracking-wider text-cyan-300">Onde você ganha mais reduzindo:</div>
+              <p id="footprintTip" class="text-sm text-slate-200 leading-relaxed">
+                Seu deslocamento já é bastante eficiente. Pequenos ajustes na alimentação e no consumo evitam emissões contínuas ao longo do ano.
+              </p>
+            </div>
+
+            <div class="rounded-2xl bg-cyan-500/10 border border-cyan-400/25 p-4">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-cyan-300">Meu compromisso desta semana:</div>
+              <p id="passportChallengeText" class="text-sm font-semibold text-white mt-1">
+                Fazer 2 dias sem carne bovina nesta semana
+              </p>
+            </div>
+
+            <div>
+              <label for="pledgeName" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Assine seu compromisso (opcional)
+              </label>
+              <input id="pledgeName" type="text" placeholder="Ex.: Mateus Zang" class="w-full px-4 py-3 min-h-[44px] rounded-xl bg-slate-900/90 border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400" />
+            </div>
+          </div>
+
+          <div class="pt-6 space-y-2.5">
+            <button id="copyPledgeBtn" type="button" class="w-full py-3.5 px-4 min-h-[48px] rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-sm transition flex items-center justify-center gap-2">
+              <span>📋</span> Copiar Meu Passaporte Climático
+            </button>
+            <p id="copyFeedback" class="text-center text-xs text-emerald-300 h-4 font-medium"></p>
+            <p class="text-[11px] text-slate-400 text-center">
+              Estimativa educativa baseada em médias de emissões por hábito (CO₂ equivalente/ano).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 5: Método 2 de Fixação — Simulador de Impacto Cotidiano -->
+  <section id="acao" class="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-deepsea/60">
+    <div class="max-w-7xl mx-auto reveal">
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-7 space-y-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-widest text-cyan-400">Fixação 02 • Hábitos que Somam</span>
+            <h2 class="font-display text-3xl sm:text-4xl font-extrabold mt-2">
+              Marque o que você pode aplicar no dia a dia
+            </h2>
+            <p class="text-slate-300 mt-2">
+              Nenhuma ação isolada resolve tudo sozinha, mas mudanças repetidas criam cultura e reduzem emissões reais todos os anos.
+            </p>
+          </div>
+
+          <div class="space-y-3" id="actionChecklist">
+            <label class="flex items-start gap-3.5 p-4 min-h-[56px] rounded-2xl glass-card cursor-pointer hover:border-emerald-400/40 transition">
+              <input type="checkbox" value="420" class="action-check mt-1 w-5 h-5 accent-emerald-400 rounded shrink-0" checked />
+              <div class="flex-1">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-bold text-white">Reduzir carne vermelha em 3 refeições por semana</span>
+                  <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 shrink-0">-420 kg CO₂/ano</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">A pecuária bovina tem alta emissão de metano (CH₄) e pressão sobre áreas florestais.</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3.5 p-4 min-h-[56px] rounded-2xl glass-card cursor-pointer hover:border-emerald-400/40 transition">
+              <input type="checkbox" value="550" class="action-check mt-1 w-5 h-5 accent-emerald-400 rounded shrink-0" />
+              <div class="flex-1">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-bold text-white">Trocar trajetos curtos de carro por caminhada, bike ou ônibus</span>
+                  <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 shrink-0">-550 kg CO₂/ano</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Motores a combustão queimam derivados de petróleo e liberam CO₂ direto na atmosfera.</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3.5 p-4 min-h-[56px] rounded-2xl glass-card cursor-pointer hover:border-emerald-400/40 transition">
+              <input type="checkbox" value="260" class="action-check mt-1 w-5 h-5 accent-emerald-400 rounded shrink-0" checked />
+              <div class="flex-1">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-bold text-white">Evitar desperdício de alimentos e planejar compras</span>
+                  <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 shrink-0">-260 kg CO₂/ano</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Comida jogada fora significa água, energia, fertilizantes e emissões desperdiçadas.</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3.5 p-4 min-h-[56px] rounded-2xl glass-card cursor-pointer hover:border-emerald-400/40 transition">
+              <input type="checkbox" value="210" class="action-check mt-1 w-5 h-5 accent-emerald-400 rounded shrink-0" />
+              <div class="flex-1">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-bold text-white">Otimizar ar-condicionado, chuveiro elétrico e iluminação LED</span>
+                  <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 shrink-0">-210 kg CO₂/ano</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Menor demanda elétrica reduz a necessidade de acionar usinas termelétricas fósseis.</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3.5 p-4 min-h-[56px] rounded-2xl glass-card cursor-pointer hover:border-emerald-400/40 transition">
+              <input type="checkbox" value="180" class="action-check mt-1 w-5 h-5 accent-emerald-400 rounded shrink-0" />
+              <div class="flex-1">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-bold text-white">Comprar menos itens descartáveis e priorizar reuso/conserto</span>
+                  <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 shrink-0">-180 kg CO₂/ano</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Extração de matérias-primas, fabricação e transporte exigem energia intensiva.</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Placar de Impacto -->
+        <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-8 sticky top-24 space-y-6 glow-emerald">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Impacto Coletivo & Pessoal</span>
+            <h3 class="font-display text-2xl font-extrabold mt-1">Sua redução anual estimada</h3>
+          </div>
+
+          <div class="rounded-2xl bg-slate-950/80 border border-emerald-400/25 p-5 text-center">
+            <div id="savedCo2" class="font-display text-4xl sm:text-5xl font-black text-emerald-400">680 kg</div>
+            <div class="text-sm text-slate-300 mt-1">de CO₂ equivalente evitados por ano</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-2xl bg-white/5 p-4">
+              <div class="text-2xl">🌳</div>
+              <div id="savedTrees" class="font-display text-2xl font-extrabold text-white mt-1">~31</div>
+              <div class="text-xs text-slate-400">árvores adultas absorvendo CO₂ por 1 ano (estimativa)</div>
+            </div>
+            <div class="rounded-2xl bg-white/5 p-4">
+              <div class="text-2xl">📣</div>
+              <div id="savedGroup" class="font-display text-2xl font-extrabold text-cyan-300 mt-1">6.8 t</div>
+              <div class="text-xs text-slate-400">se 10 amigos adotarem o mesmo ritmo</div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Lembre-se: mudanças individuais ganham escala máxima quando se somam a políticas públicas, energia limpa, proteção florestal e pressão cidadã.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 6: Método 3 de Fixação — Quiz Gamificado -->
+  <section id="quiz" class="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+    <div class="max-w-4xl mx-auto reveal">
+      <div class="text-center mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Fixação 03 • Desafio Relâmpago</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold mt-2">
+          Teste o que ficou na memória
+        </h2>
+        <p class="text-slate-300 mt-2">
+          5 perguntas rápidas com explicação imediata para fixar os conceitos-chave sem decoreba.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-3xl p-6 sm:p-8">
+        <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+          <span id="quizProgressText">Pergunta 1 de 5</span>
+          <span id="quizScoreText" class="text-emerald-400">Pontuação: 0</span>
+        </div>
+
+        <div class="w-full h-2 rounded-full bg-white/10 mb-6 overflow-hidden">
+          <div id="quizProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-300" style="width: 20%"></div>
+        </div>
+
+        <div id="quizContainer">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 py-12 px-4 sm:px-6 lg:px-8 bg-abyss text-center sm:text-left">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <div class="font-display font-extrabold text-lg">
+          Planeta<span class="text-emerald-400">Vivo</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">
+          Projeto educativo interativo sobre efeito estufa, aquecimento global e ação climática. Contexto baseado em dados públicos de OMM/Copernicus, NOAA, NASA e IPCC.
+        </p>
+      </div>
+      <a href="#topo" class="px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center rounded-xl glass-card text-xs font-bold text-slate-200 hover:text-emerald-400 transition">
+        Voltar ao topo ↑
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    // 1. Scroll Reveal
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // 2. Animated Counters
+    const counterObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseFloat(el.dataset.target);
+        const decimals = parseInt(el.dataset.decimals || '0', 10);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const duration = 1200;
+        const start = performance.now();
+
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = (target * eased).toFixed(decimals);
+          el.textContent = `${prefix}${current}${suffix}`;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+        obs.unobserve(el);
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+
+    // 3. Simulador Interativo do Efeito Estufa (Canvas)
+    const canvas = document.getElementById('greenhouseCanvas');
+    const ctx = canvas.getContext('2d');
+    const slider = document.getElementById('gasSlider');
+    const gasPercentLabel = document.getElementById('gasPercentLabel');
+    const simPpm = document.getElementById('simPpm');
+    const simTemp = document.getElementById('simTemp');
+    const simTrapped = document.getElementById('simTrapped');
+    const simTitle = document.getElementById('simTitle');
+    const simDesc = document.getElementById('simDesc');
+    const simImpacts = document.getElementById('simImpacts');
+    const simStatusBadge = document.getElementById('simStatusBadge');
+
+    let gasLevel = parseInt(slider.value, 10); // 0 a 100
+    let animTime = 0;
+
+    function updateSimulatorUI() {
+      const ratio = gasLevel / 100;
+      const ppm = Math.round(280 + ratio * 540);
+      const temp = (13.8 + ratio * 3.7).toFixed(1);
+      const trapped = Math.round(35 + ratio * 55);
+
+      gasPercentLabel.textContent = `${gasLevel}%`;
+      simPpm.textContent = `${ppm} ppm`;
+      simTemp.textContent = `${temp}°C`;
+      simTrapped.textContent = `${trapped}%`;
+
+      if (gasLevel < 28) {
+        simStatusBadge.textContent = 'Equilíbrio Natural';
+        simStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30';
+        simTitle.textContent = 'Efeito estufa equilibrado';
+        simTitle.className = 'font-display font-bold text-lg text-emerald-300';
+        simDesc.textContent = 'A camada de gases retém calor na medida certa para sustentar ciclos estáveis de água, estações e biodiversidade.';
+        simImpacts.innerHTML = `
+          <li>• Temperatura média favorável à vida</li>
+          <li>• Ciclos hidrológicos mais previsíveis</li>
+          <li>• Calotas polares estáveis ao longo das estações</li>
+        `;
+      } else if (gasLevel < 72) {
+        simStatusBadge.textContent = 'Aquecimento em Curso';
+        simStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30';
+        simTitle.textContent = 'A retenção de calor está aumentando';
+        simTitle.className = 'font-display font-bold text-lg text-amber-300';
+        simDesc.textContent = 'Com mais CO₂, metano e óxido nitroso, parte extra do calor irradiado pela superfície fica presa. O resultado são eventos extremos mais frequentes e derretimento acelerado de geleiras.';
+        simImpacts.innerHTML = `
+          <li>• Ondas de calor mais intensas e prolongadas</li>
+          <li>• Alteração no regime de chuvas e secas</li>
+          <li>• Expansão térmica dos oceanos e elevação do nível do mar</li>
+        `;
+      } else {
+        simStatusBadge.textContent = 'Alerta Climático Severo';
+        simStatusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-400/30';
+        simTitle.textContent = 'Sobrecarga térmica severa';
+        simTitle.className = 'font-display font-bold text-lg text-rose-400';
+        simDesc.textContent = 'Uma camada densa de gases estufa bloqueia grande parte da saída de calor infravermelho, elevando drasticamente a temperatura média e pressionando ecossistemas e cidades.';
+        simImpacts.innerHTML = `
+          <li>• Estresse térmico severo em populações e lavouras</li>
+          <li>• Recuo acelerado de geleiras e perda de recifes</li>
+          <li>• Risco elevado de secas extremas e tempestades fortes</li>
+        `;
+      }
+    }
+
+    function drawGreenhouseScene() {
+      animTime += 0.03;
+      const w = canvas.width;
+      const h = canvas.height;
+      const ratio = gasLevel / 100;
+      const compact = w < 520;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Céu noturno/espacial com leve aquecimento no horizonte
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+      skyGrad.addColorStop(0, '#040811');
+      skyGrad.addColorStop(0.65, '#0B1726');
+      skyGrad.addColorStop(1, ratio > 0.65 ? '#2A1018' : ratio > 0.3 ? '#1E1B18' : '#0B2426');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Estrelas discretas
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      for (let i = 0; i < 24; i++) {
+        const sx = ((i * 97) % (w - 40)) + 20;
+        const sy = ((i * 53) % 130) + 16;
+        ctx.fillRect(sx, sy, 2, 2);
+      }
+
+      // Sol no canto superior esquerdo
+      const sunX = compact ? 74 : 95;
+      const sunY = compact ? 64 : 74;
+      const sunR = compact ? 26 : 34;
+      const sunGlow = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, sunR * 2.4);
+      sunGlow.addColorStop(0, 'rgba(251, 191, 36, 0.45)');
+      sunGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      ctx.fillStyle = sunGlow;
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, sunR * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FBBF24';
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Camada de Gases do Efeito Estufa
+      const layerY = 152;
+      const layerHeight = 22 + ratio * 30;
+      const layerColor = ratio > 0.65
+        ? `rgba(244, 63, 94, ${0.18 + ratio * 0.32})`
+        : ratio > 0.28
+          ? `rgba(245, 158, 11, ${0.16 + ratio * 0.28})`
+          : `rgba(16, 185, 129, ${0.16 + ratio * 0.2})`;
+
+      ctx.fillStyle = layerColor;
+      ctx.fillRect(0, layerY, w, layerHeight);
+
+      ctx.strokeStyle = ratio > 0.65 ? 'rgba(251, 113, 133, 0.65)' : ratio > 0.28 ? 'rgba(251, 191, 36, 0.55)' : 'rgba(52, 211, 153, 0.55)';
+      ctx.setLineDash([7, 6]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, layerY);
+      ctx.lineTo(w, layerY);
+      ctx.moveTo(0, layerY + layerHeight);
+      ctx.lineTo(w, layerY + layerHeight);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Partículas de gases (CO2 / CH4)
+      const dotCount = Math.floor(8 + ratio * 28);
+      for (let i = 0; i < dotCount; i++) {
+        const gx = ((i * 73 + animTime * (14 + ratio * 25)) % (w - 30)) + 15;
+        const gy = layerY + 6 + ((i * 29) % Math.max(10, layerHeight - 12));
+        ctx.fillStyle = i % 3 === 0 ? '#34D399' : (ratio > 0.6 ? '#FB7185' : '#FBBF24');
+        ctx.beginPath();
+        ctx.arc(gx, gy, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = '#E2E8F0';
+      ctx.font = compact ? '600 10px "Plus Jakarta Sans", sans-serif' : '600 12px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(
+        compact ? `Camada GEE (${gasLevel}%)` : `Camada de Gases do Efeito Estufa (${gasLevel}%)`,
+        w - 16,
+        layerY - 8
+      );
+      ctx.textAlign = 'left';
+
+      // Superfície da Terra
+      const groundY = h - 76;
+      const groundGrad = ctx.createLinearGradient(0, groundY, 0, h);
+      groundGrad.addColorStop(0, ratio > 0.65 ? '#7C2D12' : ratio > 0.35 ? '#3F3F24' : '#065F46');
+      groundGrad.addColorStop(1, '#04131A');
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(0, groundY, w, 76);
+
+      // Raios solares descendo até a superfície
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.72)';
+      ctx.lineWidth = 2.5;
+      const sunRaysX = compact ? [sunX + 26, w * 0.44, w * 0.72] : [sunX + 34, w * 0.38, w * 0.64];
+      sunRaysX.forEach((rx, idx) => {
+        ctx.beginPath();
+        ctx.moveTo(rx - 18, sunY + 24);
+        ctx.lineTo(rx + 28, groundY);
+        ctx.stroke();
+
+        // Ponto luminoso viajando
+        const t = ((animTime * 0.55 + idx * 0.33) % 1);
+        const px = (rx - 18) + (46) * t;
+        const py = (sunY + 24) + (groundY - (sunY + 24)) * t;
+        ctx.fillStyle = '#FDE047';
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Calor subindo e sendo retido conforme o nível de gases
+      const trappedCount = Math.max(2, Math.round(2 + ratio * 7));
+      for (let i = 0; i < trappedCount; i++) {
+        const bx = w * 0.24 + ((i * 93) % (w * 0.64));
+        const cycle = ((animTime * 0.45 + i * 0.23) % 1);
+        const maxRise = groundY - (layerY + layerHeight * 0.5);
+        const py = groundY - cycle * maxRise;
+        const bounced = cycle > (0.65 - ratio * 0.35);
+
+        ctx.fillStyle = bounced ? 'rgba(244, 63, 94, 0.9)' : 'rgba(251, 146, 60, 0.85)';
+        ctx.beginPath();
+        ctx.arc(bx + Math.sin(animTime * 4 + i) * 6, py, 4.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Ícones simples de vegetação/calor na base
+      ctx.fillStyle = '#F8FAFC';
+      ctx.font = compact ? '600 11px "Plus Jakarta Sans", sans-serif' : '600 12px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(
+        ratio > 0.65
+          ? '🔥 Superfície sob forte estresse térmico'
+          : ratio > 0.3
+            ? '🌱 Superfície aquecendo acima da média histórica'
+            : '🌿 Superfície em equilíbrio térmico',
+        18,
+        groundY + 32
+      );
+
+      requestAnimationFrame(drawGreenhouseScene);
+    }
+
+    slider.addEventListener('input', (e) => {
+      gasLevel = parseInt(e.target.value, 10);
+      updateSimulatorUI();
+    });
+
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        gasLevel = parseInt(btn.dataset.preset, 10);
+        slider.value = gasLevel;
+        updateSimulatorUI();
+      });
+    });
+
+    updateSimulatorUI();
+    drawGreenhouseScene();
+
+    // 4. Abas de Causas
+    const causesData = {
+      energia: {
+        badge: 'ENERGIA & TRANSPORTES',
+        title: 'Queima de carvão, petróleo e gás natural',
+        desc: 'Gerar eletricidade, aquecer ambientes e mover veículos com combustíveis fósseis libera bilhões de toneladas de CO₂ que estavam presas no subsolo há milhões de anos.',
+        stat: 'Maior fonte global de emissões de gases de efeito estufa',
+        solutions: [
+          'Expansão acelerada de energia solar, eólica e redes inteligentes',
+          'Transporte público de qualidade, ciclovias e mobilidade elétrica',
+          'Eficiência energética em prédios, indústrias e eletrodomésticos'
+        ],
+        emoji: '⚡'
+      },
+      florestas: {
+        badge: 'FLORESTAS & USO DA TERRA',
+        title: 'Desmatamento e degradação de biomas',
+        desc: 'Árvores e solos saudáveis funcionam como grandes reservatórios de carbono. Quando florestas são derrubadas ou queimadas, o carbono estocado volta para a atmosfera e o bioma perde sua capacidade de regular chuvas.',
+        stat: 'Impacto direto no clima, na biodiversidade e no regime hídrico',
+        solutions: [
+          'Combate firme ao desmatamento ilegal e às queimadas',
+          'Restauração florestal com espécies nativas e manejo sustentável',
+          'Valorização da floresta em pé e proteção de terras indígenas e áreas de conservação'
+        ],
+        emoji: '🌳'
+      },
+      agro: {
+        badge: 'AGROPECUÁRIA & SISTEMAS ALIMENTARES',
+        title: 'Metano, óxido nitroso e desperdício',
+        desc: 'A digestão de ruminantes libera metano (CH₄) — um gás com alto potencial de aquecimento no curto prazo — e o uso excessivo de fertilizantes nitrogenados emite óxido nitroso (N₂O). Além disso, cerca de um terço dos alimentos produzidos no mundo é perdido ou desperdiçado.',
+        stat: 'Metano tem potência de aquecimento muito superior ao CO₂ em janelas de décadas',
+        solutions: [
+          'Manejo de pastagens, integração lavoura-pecuária-floresta e dietas mais equilibradas',
+          'Uso eficiente de fertilizantes e biodigestores para resíduos',
+          'Redução drástica do desperdício da fazenda até a mesa'
+        ],
+        emoji: '🌾'
+      },
+      industria: {
+        badge: 'INDÚSTRIA & PADRÕES DE CONSUMO',
+        title: 'Cimento, aço, químicos e descartáveis',
+        desc: 'Produzir cimento, aço, alumínio, plásticos e bens de consumo exige altas temperaturas e processos químicos que também geram emissões diretas, somadas ao ciclo de produção e descarte rápido.',
+        stat: 'Economia circular reduz extração bruta e energia por unidade produzida',
+        solutions: [
+          'Reciclagem de alto valor, durabilidade e direito ao conserto',
+          'Cimento de baixo carbono e processos industriais eletrificados',
+          'Consumo mais consciente: comprar menos e melhor'
+        ],
+        emoji: '🏭'
+      }
+    };
+
+    const causePanel = document.getElementById('causePanel');
+    const causeTabs = document.querySelectorAll('.cause-tab');
+
+    function renderCause(key) {
+      const item = causesData[key];
+      causePanel.innerHTML = `
+        <div class="lg:col-span-7 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300">
+            <span>${item.emoji}</span> ${item.badge}
+          </div>
+          <h3 class="font-display text-2xl sm:text-3xl font-extrabold text-white">${item.title}</h3>
+          <p class="text-slate-300 leading-relaxed">${item.desc}</p>
+          <div class="pt-2">
+            <div class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2.5">Caminhos de solução:</div>
+            <ul class="space-y-2 text-sm text-slate-200">
+              ${item.solutions.map(s => `<li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">✓</span><span>${s}</span></li>`).join('')}
+            </ul>
+          </div>
+        </div>
+        <div class="lg:col-span-5">
+          <div class="rounded-2xl bg-slate-950/75 border border-white/10 p-6 text-center space-y-3">
+            <div class="text-5xl">${item.emoji}</div>
+            <div class="text-xs uppercase tracking-widest text-slate-400 font-bold">Ponto-Chave</div>
+            <p class="font-display text-lg font-bold text-white leading-snug">${item.stat}</p>
+            <p class="text-xs text-slate-400">
+              Entender a origem ajuda a focar energia onde a redução de emissões é mais rápida e efetiva.
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    causeTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        causeTabs.forEach(t => {
+          t.className = 'cause-tab px-4 py-2.5 min-h-[44px] rounded-xl font-bold text-sm glass-card text-slate-200 hover:bg-white/10 transition';
+        });
+        tab.className = 'cause-tab active px-4 py-2.5 min-h-[44px] rounded-xl font-bold text-sm bg-emerald-400 text-slate-950 transition';
+        renderCause(tab.dataset.cause);
+      });
+    });
+
+    renderCause('energia');
+
+    // 5. Calculadora de Pegada + Desafio Semanal + Passaporte Climático
+    const groups = ['qTransport', 'qDiet', 'qEnergy', 'qConsume'];
+    const footprintValue = document.getElementById('footprintValue');
+    const footprintBar = document.getElementById('footprintBar');
+    const passportLevel = document.getElementById('passportLevel');
+    const footprintTip = document.getElementById('footprintTip');
+    const passportChallengeText = document.getElementById('passportChallengeText');
+    const pledgeName = document.getElementById('pledgeName');
+    const copyPledgeBtn = document.getElementById('copyPledgeBtn');
+    const copyFeedback = document.getElementById('copyFeedback');
+
+    let selectedChallenge = 'Fazer 2 dias sem carne bovina nesta semana';
+
+    const labelsMap = {
+      qTransport: 'Deslocamentos',
+      qDiet: 'Alimentação',
+      qEnergy: 'Energia em casa',
+      qConsume: 'Consumo e desperdício'
+    };
+
+    function calculateFootprint() {
+      let total = 0;
+      let maxKey = 'qTransport';
+      let maxVal = -1;
+
+      groups.forEach(groupId => {
+        const activeBtn = document.querySelector(`#${groupId} .calc-opt.selected`);
+        const val = activeBtn ? parseFloat(activeBtn.dataset.val) : 1.0;
+        total += val;
+        if (val > maxVal) {
+          maxVal = val;
+          maxKey = groupId;
+        }
+      });
+
+      const formatted = total.toFixed(1);
+      footprintValue.textContent = `${formatted} t CO₂e/ano`;
+      passportChallengeText.textContent = selectedChallenge;
+
+      const pct = Math.min(100, Math.max(10, (total / 9.5) * 100));
+      footprintBar.style.width = `${pct}%`;
+
+      if (total <= 3.2) {
+        passportLevel.textContent = 'Referência de Baixo Impacto';
+        footprintValue.className = 'font-display text-3xl sm:text-4xl font-black text-emerald-400';
+      } else if (total <= 5.8) {
+        passportLevel.textContent = 'Guardião em Evolução';
+        footprintValue.className = 'font-display text-3xl sm:text-4xl font-black text-amber-300';
+      } else {
+        passportLevel.textContent = 'Alto Potencial de Redução';
+        footprintValue.className = 'font-display text-3xl sm:text-4xl font-black text-rose-400';
+      }
+
+      const areaName = labelsMap[maxKey];
+      footprintTip.textContent = `Seu maior peso estimado está em "${areaName}". Ajustar pequenas rotinas nesse ponto costuma trazer o ganho mais rápido sem exigir sacrifícios extremos de uma só vez.`;
+    }
+
+    document.querySelectorAll('.calc-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.calc-opt').forEach(b => {
+          b.classList.remove('selected', 'border-emerald-400', 'bg-emerald-500/20', 'text-white');
+          b.classList.add('border-white/10', 'bg-white/5', 'text-slate-300');
+        });
+        btn.classList.add('selected', 'border-emerald-400', 'bg-emerald-500/20', 'text-white');
+        btn.classList.remove('border-white/10', 'bg-white/5', 'text-slate-300');
+        calculateFootprint();
+      });
+    });
+
+    document.querySelectorAll('.challenge-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.challenge-opt').forEach(b => {
+          b.classList.remove('selected', 'border-cyan-400', 'bg-cyan-500/15', 'text-white');
+          b.classList.add('border-white/10', 'bg-white/5', 'text-slate-300');
+        });
+        btn.classList.add('selected', 'border-cyan-400', 'bg-cyan-500/15', 'text-white');
+        btn.classList.remove('border-white/10', 'bg-white/5', 'text-slate-300');
+        selectedChallenge = btn.dataset.challenge;
+        calculateFootprint();
+      });
+    });
+
+    copyPledgeBtn.addEventListener('click', async () => {
+      const name = pledgeName.value.trim() || 'Cidadão Consciente';
+      const text = `🌍 Passaporte Climático — ${name}\n• Pegada estimada: ${footprintValue.textContent}\n• Perfil: ${passportLevel.textContent}\n• Desafio desta semana: ${selectedChallenge}\nConscientização começa com informação e atitude no dia a dia.`;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyFeedback.textContent = 'Passaporte e desafio copiados! Pronto para colar e compartilhar.';
+      } catch {
+        copyFeedback.textContent = 'Selecione e copie seu compromisso manualmente.';
+      }
+      setTimeout(() => { copyFeedback.textContent = ''; }, 3500);
+    });
+
+    calculateFootprint();
+
+    // 6. Simulador de Ações Cotidianas
+    const checks = document.querySelectorAll('.action-check');
+    const savedCo2El = document.getElementById('savedCo2');
+    const savedTreesEl = document.getElementById('savedTrees');
+    const savedGroupEl = document.getElementById('savedGroup');
+
+    function updateSavings() {
+      let totalKg = 0;
+      checks.forEach(ch => {
+        if (ch.checked) totalKg += parseInt(ch.value, 10);
+      });
+      const trees = Math.max(0, Math.round(totalKg / 22));
+      const groupTons = ((totalKg * 10) / 1000).toFixed(1);
+
+      savedCo2El.textContent = `${totalKg.toLocaleString('pt-BR')} kg`;
+      savedTreesEl.textContent = `~${trees}`;
+      savedGroupEl.textContent = `${groupTons} t`;
+    }
+
+    checks.forEach(ch => ch.addEventListener('change', updateSavings));
+    updateSavings();
+
+    // 7. Quiz Gamificado
+    const quizQuestions = [
+      {
+        q: 'Qual seria a situação da Terra sem o efeito estufa natural?',
+        options: [
+          'Seria muito mais fria, em torno de -18°C em média, dificultando a vida como conhecemos',
+          'Não teria atmosfera nem nuvens',
+          'Seria um deserto vulcânico sem água líquida'
+        ],
+        correct: 0,
+        why: 'O efeito estufa natural é essencial: sem ele, boa parte do calor escaparia para o espaço e a temperatura média global cairia drasticamente.'
+      },
+      {
+        q: 'O que caracteriza principalmente o aquecimento global atual?',
+        options: [
+          'Apenas variações naturais de curto prazo do Sol',
+          'O aumento acelerado da temperatura média impulsionado por emissões humanas de gases estufa',
+          'O afastamento gradual da Terra em relação ao Sol'
+        ],
+        correct: 1,
+        why: 'Observações climáticas e físicas mostram que o aquecimento recente acompanha o salto de CO₂, metano e outros gases liberados por atividades humanas.'
+      },
+      {
+        q: 'Por que o metano (CH₄) merece atenção especial no combate ao aquecimento?',
+        options: [
+          'Porque ele só existe na estratosfera',
+          'Porque tem alto potencial de reter calor no curto prazo e cortar emissões traz alívio rápido',
+          'Porque ele resfria os oceanos quando acumulado'
+        ],
+        correct: 1,
+        why: 'Embora permaneça menos tempo na atmosfera que o CO₂, o metano retém muito mais calor por tonelada no curto prazo — reduzir vazamentos, resíduos e emissões agrícolas ajuda a frear o ritmo do aquecimento.'
+      },
+      {
+        q: 'Qual papel as florestas exercem no equilíbrio do clima?',
+        options: [
+          'Absorvem carbono pela fotossíntese, armazenam biomassa e ajudam a regular ciclos de chuva',
+          'Bloqueiam toda a luz solar durante o dia',
+          'Substituem a necessidade de reduzir combustíveis fósseis sozinhas'
+        ],
+        correct: 0,
+        why: 'Florestas são aliadas fundamentais para absorver carbono e manter a umidade e as chuvas, mas não substituem a redução direta das emissões fósseis.'
+      },
+      {
+        q: 'Qual combinação torna a ação climática mais efetiva?',
+        options: [
+          'Esperar apenas tecnologias futuras sem mudar hábitos',
+          'Culpar apenas o indivíduo e ignorar políticas e infraestrutura',
+          'Somar mudanças de hábitos cotidianos a escolhas coletivas, energia limpa e proteção ambiental'
+        ],
+        correct: 2,
+        why: 'A transformação real acontece quando hábitos conscientes, inovação, transição energética e políticas públicas caminham juntos.'
+      }
+    ];
+
+    let qIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const quizContainer = document.getElementById('quizContainer');
+    const quizProgressText = document.getElementById('quizProgressText');
+    const quizScoreText = document.getElementById('quizScoreText');
+    const quizProgressBar = document.getElementById('quizProgressBar');
+
+    function renderQuestion() {
+      answered = false;
+      const item = quizQuestions[qIndex];
+      quizProgressText.textContent = `Pergunta ${qIndex + 1} de ${quizQuestions.length}`;
+      quizScoreText.textContent = `Pontuação: ${score}`;
+      quizProgressBar.style.width = `${((qIndex + 1) / quizQuestions.length) * 100}%`;
+
+      quizContainer.innerHTML = `
+        <h3 class="font-display text-xl sm:text-2xl font-bold text-white mb-5">${item.q}</h3>
+        <div class="space-y-3" id="quizOptions">
+          ${item.options.map((opt, idx) => `
+            <button type="button" data-idx="${idx}" class="quiz-opt w-full text-left p-4 min-h-[52px] rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm sm:text-base font-medium text-slate-100 transition">
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+        <div id="quizFeedback" class="mt-5 hidden rounded-2xl p-4 text-sm leading-relaxed"></div>
+        <div class="mt-6 flex justify-end">
+          <button id="nextQuizBtn" type="button" class="hidden px-6 py-3 min-h-[48px] rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-sm transition">
+            ${qIndex === quizQuestions.length - 1 ? 'Ver Resultado Final' : 'Próxima Pergunta →'}
+          </button>
+        </div>
+      `;
+
+      document.querySelectorAll('.quiz-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (answered) return;
+          answered = true;
+          const chosen = parseInt(btn.dataset.idx, 10);
+          const feedback = document.getElementById('quizFeedback');
+          const nextBtn = document.getElementById('nextQuizBtn');
+
+          document.querySelectorAll('.quiz-opt').forEach((b, i) => {
+            b.disabled = true;
+            if (i === item.correct) {
+              b.classList.add('border-emerald-400', 'bg-emerald-500/20', 'text-emerald-200');
+            } else if (i === chosen) {
+              b.classList.add('border-rose-400', 'bg-rose-500/20', 'text-rose-200');
+            } else {
+              b.classList.add('opacity-60');
+            }
+          });
+
+          feedback.classList.remove('hidden');
+          if (chosen === item.correct) {
+            score += 1;
+            quizScoreText.textContent = `Pontuação: ${score}`;
+            feedback.className = 'mt-5 rounded-2xl p-4 text-sm leading-relaxed bg-emerald-500/15 border border-emerald-400/30 text-emerald-100';
+            feedback.innerHTML = `<strong>Mandou bem!</strong> ${item.why}`;
+          } else {
+            feedback.className = 'mt-5 rounded-2xl p-4 text-sm leading-relaxed bg-amber-500/15 border border-amber-400/30 text-amber-100';
+            feedback.innerHTML = `<strong>Quase lá!</strong> ${item.why}`;
+          }
+
+          nextBtn.classList.remove('hidden');
+        });
+      });
+
+      document.getElementById('nextQuizBtn').addEventListener('click', () => {
+        if (qIndex < quizQuestions.length - 1) {
+          qIndex += 1;
+          renderQuestion();
+        } else {
+          renderQuizResult();
+        }
+      });
+    }
+
+    function renderQuizResult() {
+      quizProgressText.textContent = 'Concluído!';
+      quizProgressBar.style.width = '100%';
+
+      let badge = '🌱 Explorador Climático';
+      let msg = 'Você já domina os pontos essenciais e está pronto para espalhar informação clara e prática.';
+      if (score === 5) {
+        badge = '🏆 Mestre da Conscientização';
+        msg = 'Placar máximo! Você conectou ciência, causas, impactos e caminhos reais de ação.';
+      } else if (score >= 3) {
+        badge = '⚡ Agente de Mudança';
+        msg = 'Ótimo desempenho! Você já diferencia bem os conceitos e entende onde o impacto é maior.';
+      }
+
+      quizContainer.innerHTML = `
+        <div class="text-center py-4 space-y-4">
+          <div class="inline-block px-4 py-1.5 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-bold uppercase tracking-wider">
+            ${badge}
+          </div>
+          <h3 class="font-display text-3xl sm:text-4xl font-black text-white">
+            Você acertou ${score} de ${quizQuestions.length}
+          </h3>
+          <p class="text-slate-300 max-w-lg mx-auto">${msg}</p>
+          <div class="pt-3 flex flex-wrap justify-center gap-3">
+            <button id="restartQuizBtn" type="button" class="px-6 py-3 min-h-[48px] rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-sm transition">
+              Jogar Novamente
+            </button>
+            <a href="#acao" class="px-6 py-3 min-h-[48px] inline-flex items-center justify-center rounded-xl glass-card hover:bg-white/10 text-white font-bold text-sm transition">
+              Revisar Ações Diárias
+            </a>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('restartQuizBtn').addEventListener('click', () => {
+        qIndex = 0;
+        score = 0;
+        renderQuestion();
+      });
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
